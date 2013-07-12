@@ -1,29 +1,29 @@
 <?php
 /**
- * 
- * 
- * Date: 27.06.13
- * Time: 15:01
+ * Dependency container
  *
  * @author Maxim Khan-Magomedov <maxim.km@gmail.com>
- * @package Atom\Traits\Dependency
+ * @package Brujo\Traits\Dependency
  */
 
-namespace Atom\Traits\Dependency;
+namespace Brujo\Traits\Dependency;
 
+/**
+ * Object uses dependency container
+ */
 trait Container 
 {
     /**
      * Container
      *
-     * @var \Atom\Container
+     * @var \Brujo\Container
      */
     protected $dependencyContainer;
 
     /**
      * Get container
      *
-     * @return \Atom\Container
+     * @return \Brujo\Container
      */
     public function getDependencyContainer()
     {
@@ -33,10 +33,10 @@ trait Container
     /**
      * Set container
      *
-     * @param \Atom\Container $dependencyContainer
+     * @param \Brujo\Container $dependencyContainer
      * @return Container
      */
-    public function setDependencyContainer(\Atom\Container $dependencyContainer)
+    public function setDependencyContainer(\Brujo\Container $dependencyContainer)
     {
         $this->dependencyContainer = $dependencyContainer;
 
@@ -71,19 +71,19 @@ trait Container
     /**
      * Check if container is set
      *
-     * @throws \ErrorException
+     * @throws \RuntimeException
      */
     protected function checkContainerState()
     {
-        if (!$this->dependencyContainer instanceof \Atom\Container) {
-            throw new \ErrorException('Container is not set');
+        if (!$this->dependencyContainer instanceof \Brujo\Container) {
+            throw new \RuntimeException('Container is not set');
         }
     }
 
     /**
      * Require dependencies to be injected
      *
-     * @throws \ErrorException
+     * @throws \RuntimeException
      */
     protected function requireDependencies()
     {
@@ -104,7 +104,7 @@ trait Container
         if (!empty($notInjected)) {
             $error = 'Required dependencies are not injected: '
                 . implode(', ', $notInjected);
-            throw new \ErrorException($error);
+            throw new \RuntimeException($error);
         }
     }
 }
