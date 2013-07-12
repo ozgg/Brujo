@@ -40,7 +40,7 @@ class ContainerTest extends TestCase
      */
     public function testExtractExisting()
     {
-        $element   = new \stdClass;
+        $element = new \stdClass;
 
         $element->foo = 'bar';
         $this->container->inject('foo', $element);
@@ -56,7 +56,7 @@ class ContainerTest extends TestCase
      */
     public function testExtractEmpty()
     {
-        $element   = $this->container->extract('foo');
+        $element = $this->container->extract('foo');
 
         $this->assertNull($element);
     }
@@ -68,7 +68,7 @@ class ContainerTest extends TestCase
      */
     public function testCheck()
     {
-        $element   = ['foo' => 'bar'];
+        $element = ['foo' => 'bar'];
         $this->container->inject('foo', $element);
 
         $this->assertTrue($this->container->contains('foo'));
