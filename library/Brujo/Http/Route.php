@@ -226,7 +226,7 @@ abstract class Route
     public function request($method, $uri)
     {
         if (!in_array($method, $this->methods)) {
-            $error = new MethodNotAllowed;
+            $error = new MethodNotAllowed("Method {$method} is not allowed");
             $error->setHeader('Allow', implode(', ', $this->getMethods()));
 
             throw $error;

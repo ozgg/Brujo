@@ -1,20 +1,20 @@
 <?php
 /**
- *
- *
- * Date: 06.07.13
- * Time: 21:15
+ * Controller
  *
  * @author Maxim Khan-Magomedov <maxim.km@gmail.com>
- * @package Atom\Http
+ * @package Brujo\Http
  */
 
-namespace Atom\Http;
+namespace Brujo\Http;
 
-use Atom\Container;
-use Atom\Renderer;
-use Atom\Traits;
+use Brujo\Container;
+use Brujo\Renderer;
+use Brujo\Traits;
 
+/**
+ * Controller
+ */
 class Controller
 {
     use Traits\HasParameters,
@@ -29,7 +29,7 @@ class Controller
     /**
      * @var string
      */
-    protected $format = Renderer::FORMAT_HTML;
+    protected $format = Renderer::FORMAT_JSON;
 
     /**
      * @var string
@@ -73,7 +73,7 @@ class Controller
     }
 
     /**
-     * @return \Atom\Http\Status
+     * @return \Brujo\Http\Status
      */
     public function getStatus()
     {
@@ -81,7 +81,7 @@ class Controller
     }
 
     /**
-     * @param \Atom\Http\Status $status
+     * @param \Brujo\Http\Status $status
      * @return Controller
      */
     public function setStatus($status)
