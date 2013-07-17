@@ -31,6 +31,13 @@ class Application
     protected $name;
 
     /**
+     * Configuration directory
+     *
+     * @var string
+     */
+    protected $configDirectory = 'config';
+
+    /**
      * Constructor
      *
      * Sets application directory and bootstraps it
@@ -44,6 +51,10 @@ class Application
         $this->setBaseDirectory($directory);
         $this->setName($name);
         $this->setDependencyContainer(new Container);
+    }
+
+    public function bootstrap()
+    {
         $this->initRequest();
         $this->guessEnvironment();
         $this->initConfig();
@@ -65,11 +76,12 @@ class Application
                 $request->getMethod(),
                 $route->getActionName()
             );
-        } catch (Error $e) {
-            $this->fallback($e);
         } catch (\Exception $e) {
-            $this->fallback($e);
+            $this->injectDependency('error', $e);
+            $this->renderError();
         }
+
+        $this->finish();
     }
 
     /**
@@ -110,8 +122,8 @@ class Application
     }
 
     /**
-     * @return Router
      * @throws \RuntimeException
+     * @return Router
      */
     public function getRouter()
     {
@@ -150,11 +162,29 @@ class Application
     }
 
     /**
-     * Bootstrap application
+     * @return string
      */
-    protected function bootstrap()
+    public function getConfigDirectory()
     {
-        // Bootstrap extending applications
+        return $this->configDirectory;
+    }
+
+    /**
+     * @param string $configDirectory
+     * @return Application
+     */
+    public function setConfigDirectory($configDirectory)
+    {
+        $this->configDirectory = $configDirectory;
+
+        return $this;
+    }
+
+    /**
+     * Things to do after application is finished
+     */
+    protected function finish()
+    {
     }
 
     protected function initRequest()
@@ -172,8 +202,11 @@ class Application
      */
     protected function initConfig()
     {
-        $baseDir = $this->getBaseDirectory() . '/../../config';
-        $config  = new Configuration($baseDir);
+        $baseDir = $this->getBaseDirectory()
+            . '/../../'
+            . $this->getConfigDirectory();
+
+        $config = new Configuration($baseDir);
         $config->setEnvironment($this->getEnvironment());
         $this->injectDependency('config', $config);
     }
@@ -209,6 +242,7 @@ class Application
 
     protected function executeController($name, $method, $action)
     {
+        $name  = ucfirst($name);
         $parts = [
             $this->baseDirectory,
             'controllers',
@@ -217,7 +251,7 @@ class Application
         $file  = implode(DIRECTORY_SEPARATOR, $parts) . '.php';
         if (is_file($file)) {
             include $file;
-            $parts[0] = $this->getName();
+            $parts[0]  = $this->getName();
             $className = implode('\\', $parts);
             if (!class_exists($className)) {
                 $error = "Cannot find controller {$className}";
@@ -248,43 +282,34 @@ class Application
         $response = new Response($renderer->render());
         $response->setContentType($renderer->getContentType());
         $response->send();
+
+        $this->injectDependency('response', $response);
     }
 
-    protected function renderError(Error $error)
+    protected function renderError()
     {
-        $renderer = new Renderer\Json;
-        $renderer->setDependencyContainer($this->getDependencyContainer());
-        $renderer->setParameter('error', $error->getMessage());
-        if (!$this->isProduction()) {
-            $renderer->setParameter('trace', $error->getTrace());
-        }
+        $error = $this->extractDependency('error');
+        if ($error instanceof \Exception) {
+            $renderer = new Renderer\Json;
+            $renderer->setDependencyContainer($this->getDependencyContainer());
+            $renderer->setParameter('error', $error->getMessage());
+            if (!$this->isProduction()) {
+                $renderer->setParameter('trace', $error->getTrace());
+            }
 
-        $response = new Response($renderer->render());
-        $response->setStatus($error->getStatus());
-        $response->setContentType($renderer->getContentType());
+            $response = new Response($renderer->render());
+            if ($error instanceof Error) {
+                $response->setStatus($error->getStatus());
+            } else {
+                $response->setStatus(new InternalServerError);
+            }
+            $response->setContentType($renderer->getContentType());
+            $response->send();
 
-        $response->send();
-    }
-
-    /**
-     * Fallback if exception is caught
-     *
-     * @param \Exception $e
-     */
-    protected function fallback(\Exception $e)
-    {
-        $renderer = new Renderer\Json;
-        if (!$this->isProduction()) {
-            $renderer->setParameter('error', $e->getMessage());
-            $renderer->setParameter('trace', $e->getTrace());
+            $this->injectDependency('response', $response);
         } else {
-            $renderer->setParameter('error', 'Internal server error');
+            $response = new Response('Unexpected Error');
+            $response->send();
         }
-
-        $response = new Response($renderer->render());
-        $response->setContentType($renderer->getContentType());
-        $response->setStatus(new InternalServerError);
-
-        $response->send();
     }
 }

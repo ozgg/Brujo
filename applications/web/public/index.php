@@ -8,4 +8,5 @@
 require __DIR__ . '/../../../bootstrap.php';
 
 $application = new \Brujo\Http\Application(realpath(__DIR__ . '/../'));
+$application->bootstrap();
 $application->run();
