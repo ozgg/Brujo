@@ -46,11 +46,11 @@ class Application
      */
     public function __construct($directory)
     {
-        $name = ucfirst(strtolower(basename($directory)));
-
         $this->setBaseDirectory($directory);
-        $this->setName($name);
         $this->setDependencyContainer(new Container);
+
+        $name = ucfirst(strtolower(basename($this->getBaseDirectory())));
+        $this->setName($name);
     }
 
     public function bootstrap()
@@ -152,7 +152,7 @@ class Application
         $path = realpath($this->baseDirectory . DIRECTORY_SEPARATOR . 'config');
         $file = $path . DIRECTORY_SEPARATOR . $name . '.php';
 
-        if (file_exists($file) && is_file($file)) {
+        if (is_file($file)) {
             $config = include $file;
         } else {
             throw new \RuntimeException("Cannot read config from file {$file}");
