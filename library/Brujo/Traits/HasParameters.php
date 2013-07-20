@@ -64,7 +64,7 @@ trait HasParameters
             while (!empty($parts)) {
                 $part = array_shift($parts);
                 if (array_key_exists($part, $storage)) {
-                    if (is_array($storage[$part])) {
+                    if (is_array($storage[$part]) && !empty($parts)) {
                         $storage = $storage[$part];
                     } else {
                         break;
