@@ -29,7 +29,7 @@ class Controller
     /**
      * @var string
      */
-    protected $format = Renderer::FORMAT_JSON;
+    protected $format = Renderer::FORMAT_HTML;
 
     /**
      * @var string
