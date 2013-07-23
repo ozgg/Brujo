@@ -7,7 +7,7 @@
  */
 
 namespace Test\Unit\Brujo\Inflection;
- 
+
 use Brujo\Inflection\Countable;
 use Brujo\Test\TestCase;
 

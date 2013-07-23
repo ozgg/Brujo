@@ -102,16 +102,24 @@ class RestRouteTest extends TestCase
     public function mapActionNameProvider()
     {
         return [
-            ['/users', [], '/users', RestRoute::METHOD_GET, 'Collection'],
-            ['/users', [], '/users/1', RestRoute::METHOD_PUT, 'Element'],
+            ['/users', [], '/users', RestRoute::METHOD_GET, 'Users'],
+            ['/users', [], '/users/1', RestRoute::METHOD_PUT, 'User'],
             ['/foo', ['a'], '/foo', RestRoute::METHOD_DELETE, 'Collection'],
             ['/foo', ['f'], '/foo', RestRoute::METHOD_POST, 'Collection'],
             [
-                '/a', ['bar', 'c'], '/a/1/bar/4', RestRoute::METHOD_GET,
-                'ElementBarResource'
+                '/foos', ['bars', 'c'], '/foos/1/bars/4', RestRoute::METHOD_GET,
+                'FooBar'
             ],
             [
-                '/a', ['bar', 'c'], '/a/1/bar', RestRoute::METHOD_GET,
+                '/foos', ['bars', 'c'], '/foos/1/bars', RestRoute::METHOD_GET,
+                'FooBars'
+            ],
+            [
+                '/foo', ['bars', 'c'], '/foo/1/bars', RestRoute::METHOD_GET,
+                'ElementBars'
+            ],
+            [
+                '/foo', ['bar', 'c'], '/foo/1/bar', RestRoute::METHOD_GET,
                 'ElementBarResources'
             ],
         ];

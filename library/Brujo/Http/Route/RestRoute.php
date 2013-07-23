@@ -9,6 +9,7 @@
 namespace Brujo\Http\Route;
 
 use Brujo\Http\Route;
+use Brujo\Inflection\Countable;
 
 /**
  * REST route
@@ -169,18 +170,32 @@ class RestRoute extends Route
      */
     protected function mapActionName($elementId, $resource, $resourceId)
     {
+        $countable = new Countable;
+        $plural    = pathinfo($this->uri, PATHINFO_BASENAME);
+        $singular  = $countable->singularize($plural);
+        $fallback  = ($plural == $singular);
+
         if (!empty($elementId)) {
-            $actionName = 'Element';
+            $actionName = $fallback ? 'Element' : ucfirst($singular);
             if (strlen($resource)) {
-                $actionName .= ucfirst($resource);
-                if (!empty($resourceId)) {
-                    $actionName .= 'Resource';
+                $singular = $countable->singularize($resource);
+                if ($singular == $resource) {
+                    $actionName .= ucfirst($singular);
+                    if (!empty($resourceId)) {
+                        $actionName .= 'Resource';
+                    } else {
+                        $actionName .= 'Resources';
+                    }
                 } else {
-                    $actionName .= 'Resources';
+                    if (!empty($resourceId)) {
+                        $actionName .= ucfirst($singular);
+                    } else {
+                        $actionName .= ucfirst($resource);
+                    }
                 }
             }
         } else {
-            $actionName = 'Collection';
+            $actionName = $fallback ? 'Collection' : ucfirst($plural);
         }
 
         $this->setActionName($actionName);
