@@ -60,6 +60,27 @@ class Router
         return $this->routes;
     }
 
+    public function loadCompacted($baseDir)
+    {
+        if (is_dir($baseDir)) {
+            foreach (scandir($baseDir) as $file) {
+                if ($file[0] == '.') {
+                    continue;
+                }
+                $type = pathinfo($file, PATHINFO_FILENAME);
+                $data = include $baseDir . '/' . $file;
+                switch ($type) {
+                    case Route::TYPE_REST:
+                        $this->decompressRestRoutes($data);
+                        break;
+                    default:
+                        $error = "Invalid route type {$type}";
+                        throw new \RuntimeException($error);
+                }
+            }
+        }
+    }
+
     /**
      * Import routes from array
      *
@@ -105,5 +126,34 @@ class Router
         }
 
         return $match;
+    }
+
+    protected function decompressRestRoutes(array $data)
+    {
+        foreach ($data as $uri => $routeInfo) {
+            $prefix = '';
+            $scope  = str_replace('/', '_', trim($uri, '/'));
+            if ($scope != '') {
+                $scope .= '_';
+            }
+            if (($uri == '') || ($uri[0] != '/')) {
+                $uri = '/' . $uri;
+            }
+            if (substr($uri, -1) != '/') {
+                $uri .= '/';
+            }
+            foreach ($routeInfo as $name => $resources) {
+                if ($name == '_prefix') {
+                    $prefix = $resources;
+                } else {
+                    $route = new Route\RestRoute;
+                    $route->setName($scope . $name);
+                    $route->setControllerName($prefix . ucfirst($name));
+                    $route->setUri($uri . $name);
+                    $route->setResources($resources);
+                    $this->addRoute($route);
+                }
+            }
+        }
     }
 }

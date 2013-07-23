@@ -30,8 +30,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected function getSample($name)
     {
         $sample = null;
-        $path   = __DIR__ . DIRECTORY_SEPARATOR . $this->rootPath
-            . DIRECTORY_SEPARATOR . 'samples';
+        $path   = __DIR__ . "/{$this->rootPath}/samples";
         $file   = realpath($path) . DIRECTORY_SEPARATOR . $name . '.php';
         if (is_file($file)) {
             $sample = include $file;
@@ -41,5 +40,10 @@ class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         return $sample;
+    }
+
+    protected function getSamplesPath()
+    {
+        return realpath(__DIR__ . "/{$this->rootPath}/samples");
     }
 }

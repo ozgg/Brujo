@@ -177,6 +177,15 @@ abstract class Route
     }
 
     /**
+     * Decompress compacted data
+     *
+     * @param array $data
+     */
+    public function decompress(array $data)
+    {
+    }
+
+    /**
      * Init from array
      *
      * @param array $data

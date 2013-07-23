@@ -74,4 +74,19 @@ class RouterTest extends TestCase
         $this->router->addRoute((new Http\Route\StaticRoute)->setUri('/foo'));
         $this->router->matchRequest('/bar');
     }
+
+    public function testLoadCompacted()
+    {
+        $path = $this->getSamplesPath() . '/config/routes';
+        $this->router->loadCompacted($path);
+
+        $routes = $this->router->getRoutes();
+        $this->assertTrue(isset($routes['users']));
+        $this->assertTrue(isset($routes['v1_users']));
+        $this->assertTrue(isset($routes['deeply_nested_something_interests']));
+
+        $route = $this->router->getRoute('deeply_nested_something_interests');
+        $this->assertTrue($route instanceof Http\Route\RestRoute);
+        $this->assertEquals('deepInterests', $route->getControllerName());
+    }
 }
