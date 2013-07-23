@@ -219,6 +219,7 @@ class Application
         $routes = $this->importConfig('routes');
         $router = new Router;
         $router->import($routes);
+        $router->loadCompacted($this->getBaseDirectory() . '/config/routes');
 
         $this->injectDependency('router', $router);
     }
