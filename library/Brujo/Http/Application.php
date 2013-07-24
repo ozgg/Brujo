@@ -1,9 +1,6 @@
 <?php
 /**
- *
- *
- * Date: 27.06.13
- * Time: 15:31
+ * HTTP application
  *
  * @author Maxim Khan-Magomedov <maxim.km@gmail.com>
  * @package Brujo\Http
@@ -17,6 +14,9 @@ use Brujo\Http\Status\InternalServerError;
 use Brujo\Renderer;
 use Brujo\Traits;
 
+/**
+ * HTTP Application
+ */
 class Application
 {
     use Traits\Environment,
@@ -40,7 +40,7 @@ class Application
     /**
      * Constructor
      *
-     * Sets application directory and bootstraps it
+     * Sets application directory and its name
      *
      * @param string $directory
      */
@@ -53,6 +53,11 @@ class Application
         $this->setName($name);
     }
 
+    /**
+     * Bootstrap
+     *
+     * Initialize minimal dependencies.
+     */
     public function bootstrap()
     {
         $this->initRequest();
@@ -61,6 +66,11 @@ class Application
         $this->initRouter();
     }
 
+    /**
+     * Run
+     *
+     * Execute controller based on request.
+     */
     public function run()
     {
         $this->requireDependencies('router', 'request');
@@ -81,10 +91,12 @@ class Application
             $this->renderError();
         }
 
-        $this->finish();
+        $this->postDispatch();
     }
 
     /**
+     * Get name
+     *
      * @return string
      */
     public function getName()
@@ -93,6 +105,8 @@ class Application
     }
 
     /**
+     * Set name
+     *
      * @param string $name
      * @return Application
      */
@@ -104,6 +118,8 @@ class Application
     }
 
     /**
+     * Extract request from container or initialize it
+     *
      * @throws \RuntimeException
      * @return Request
      */
@@ -122,6 +138,8 @@ class Application
     }
 
     /**
+     * Extract router from container
+     *
      * @throws \RuntimeException
      * @return Router
      */
@@ -136,7 +154,7 @@ class Application
     }
 
     /**
-     * Import config from file
+     * Import configuration from file
      *
      * @param string $name
      * @throws \RuntimeException
@@ -162,6 +180,8 @@ class Application
     }
 
     /**
+     * Get configuration directory
+     *
      * @return string
      */
     public function getConfigDirectory()
@@ -170,6 +190,8 @@ class Application
     }
 
     /**
+     * Set configuration directory
+     *
      * @param string $configDirectory
      * @return Application
      */
@@ -181,12 +203,15 @@ class Application
     }
 
     /**
-     * Things to do after application is finished
+     * Things to do after application run is finished
      */
-    protected function finish()
+    protected function postDispatch()
     {
     }
 
+    /**
+     * Initialize request
+     */
     protected function initRequest()
     {
         $request = new Request($_SERVER);
@@ -224,6 +249,9 @@ class Application
         $this->injectDependency('router', $router);
     }
 
+    /**
+     * Guess environment by requested host
+     */
     protected function guessEnvironment()
     {
         $request = $this->getRequest();
@@ -241,15 +269,18 @@ class Application
         $this->setEnvironment($environment);
     }
 
+    /**
+     * Execute controller
+     *
+     * @param string $name
+     * @param string $method
+     * @param string $action
+     * @throws \RuntimeException
+     */
     protected function executeController($name, $method, $action)
     {
-        $name  = ucfirst($name);
-        $parts = [
-            $this->baseDirectory,
-            'controllers',
-            "{$name}Controller"
-        ];
-        $file  = implode(DIRECTORY_SEPARATOR, $parts) . '.php';
+        $name = ucfirst($name);
+        $file = "{$this->getBaseDirectory()}/controllers/{$name}Controller.php";
         if (is_file($file)) {
             include $file;
             $parts[0]  = $this->getName();
@@ -263,16 +294,24 @@ class Application
                 $error = "Invalid controller: {$className}";
                 throw new \RuntimeException($error);
             }
+
+            $controller->setEnvironment($this->getEnvironment());
+            $controller->init();
+            $controller->preDispatch();
+            $controller->execute($method, $action);
+            $controller->postDispatch();
+
+            $this->renderResponse($controller);
         } else {
             throw new \RuntimeException("Cannot load controller from {$file}");
         }
-
-        $controller->setEnvironment($this->getEnvironment());
-        $controller->init();
-        $controller->execute($method, $action);
-        $this->renderResponse($controller);
     }
 
+    /**
+     * Render response
+     *
+     * @param Controller $controller
+     */
     protected function renderResponse(Controller $controller)
     {
         $renderer = Renderer::factory(
@@ -287,6 +326,9 @@ class Application
         $this->injectDependency('response', $response);
     }
 
+    /**
+     * Render error
+     */
     protected function renderError()
     {
         $error = $this->extractDependency('error');
@@ -311,6 +353,8 @@ class Application
         } else {
             $response = new Response('Unexpected Error');
             $response->send();
+
+            $this->injectDependency('response', $response);
         }
     }
 }

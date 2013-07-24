@@ -27,29 +27,66 @@ class Controller
     protected $status;
 
     /**
+     * Response/render format
+     *
      * @var string
      */
     protected $format = Renderer::FORMAT_HTML;
 
     /**
+     * Layout name to use
+     *
      * @var string
      */
     protected $layoutName = 'layout';
 
     /**
+     * View name to use
+     *
      * @var string
      */
     protected $viewName = 'index';
 
+    /**
+     * Constructor
+     *
+     * Sets dependency container
+     *
+     * @param Container $container
+     */
     public function __construct(Container $container)
     {
         $this->setDependencyContainer($container);
     }
 
+    /**
+     * Initialize
+     */
     public function init()
     {
     }
 
+    /**
+     * Perform operations before calling execute
+     */
+    public function preDispatch()
+    {
+    }
+
+    /**
+     * Perform operations after execute finished
+     */
+    public function postDispatch()
+    {
+    }
+
+    /**
+     * Execute action
+     *
+     * @param string $method HTTP method
+     * @param string $action Action
+     * @throws Error\NotFound
+     */
     public function execute($method, $action)
     {
         $action .= 'Action';
@@ -73,6 +110,8 @@ class Controller
     }
 
     /**
+     * Get response status
+     *
      * @return \Brujo\Http\Status
      */
     public function getStatus()
@@ -81,6 +120,8 @@ class Controller
     }
 
     /**
+     * Set response status
+     *
      * @param \Brujo\Http\Status $status
      * @return Controller
      */
@@ -92,7 +133,9 @@ class Controller
     }
 
     /**
-     * @return mixed
+     * Get response/render format
+     *
+     * @return string
      */
     public function getFormat()
     {
@@ -100,7 +143,9 @@ class Controller
     }
 
     /**
-     * @param mixed $format
+     * Set response/render format
+     *
+     * @param string $format
      * @return Controller
      */
     public function setFormat($format)
@@ -111,6 +156,8 @@ class Controller
     }
 
     /**
+     * Get layout name
+     *
      * @return string
      */
     public function getLayoutName()
@@ -119,6 +166,8 @@ class Controller
     }
 
     /**
+     * Set layout name
+     *
      * @param string $layoutName
      * @return Controller
      */
@@ -130,6 +179,8 @@ class Controller
     }
 
     /**
+     * Get view name
+     *
      * @return string
      */
     public function getViewName()
@@ -138,6 +189,8 @@ class Controller
     }
 
     /**
+     * Set view name
+     *
      * @param string $viewName
      * @return Controller
      */
@@ -149,6 +202,8 @@ class Controller
     }
 
     /**
+     * Get HTTP request
+     *
      * @return Request
      * @throws \RuntimeException
      */
@@ -163,6 +218,8 @@ class Controller
     }
 
     /**
+     * Get used route
+     *
      * @return Route
      * @throws \RuntimeException
      */
