@@ -280,7 +280,10 @@ class Application
     protected function executeController($name, $method, $action)
     {
         $name = ucfirst($name);
-        $file = "{$this->getBaseDirectory()}/controllers/{$name}Controller.php";
+        $parts = [
+            $this->getBaseDirectory(), 'controllers', "{$name}Controller",
+        ];
+        $file = implode(DIRECTORY_SEPARATOR, $parts) . '.php';
         if (is_file($file)) {
             include $file;
             $parts[0]  = $this->getName();
