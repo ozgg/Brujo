@@ -54,7 +54,7 @@ class HelperBroker
         if (!isset($this->storage[$helperName])) {
             if (strpos($helperName, '.') > 0) {
                 $parts      = explode('.', $helperName);
-                $namespace  = array_shift($parts) . '\\Renderer';
+                $namespace  = array_shift($parts) . '\\Helper';
                 $helperName = implode('_', $parts);
             } else {
                 $namespace = __NAMESPACE__;
@@ -62,7 +62,7 @@ class HelperBroker
 
             $helperClass = $namespace . '\\Helper\\' . ucfirst($helperName);
             if (class_exists($helperClass)) {
-                $helper = new $helperClass;
+                $helper = new $helperClass($this);
                 if ($helper instanceof Helper) {
                     $helper->setParameters($this->getParameters());
                     $this->storage[$helperName] = $helper;

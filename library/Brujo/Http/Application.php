@@ -321,6 +321,9 @@ class Application
             $controller->getFormat(), $this->getDependencyContainer()
         );
         $renderer->setParameters($controller->getParameters());
+        $renderer->setLayoutName($controller->getLayoutName());
+        $renderer->setViewName($controller->getViewName());
+        $renderer->setBaseDirectory($this->getBaseDirectory());
 
         $response = new Response($renderer->render());
         $response->setContentType($renderer->getContentType());

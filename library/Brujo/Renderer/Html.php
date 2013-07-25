@@ -11,6 +11,7 @@
 
 namespace Brujo\Renderer;
 
+use Brujo\Helper\ViewParser;
 use Brujo\Renderer;
 
 class Html extends Renderer
@@ -21,19 +22,12 @@ class Html extends Renderer
      */
     public function render()
     {
-        $templatePath = $this->getBaseDirectory()
-            . '/layouts/'
-            . $this->getLayoutName()
-            . '.phtml';
+        /** @var ViewParser $viewParser */
+        $viewParser = $this->getHelperBroker()->getHelper('viewParser');
+        $viewParser->setBaseDirectory($this->getBaseDirectory());
+        $layoutPath = 'layouts/' . $this->getLayoutName();
 
-        if (!is_file($templatePath)) {
-            throw new \RuntimeException("Cannot find template {$templatePath}");
-        }
-
-        ob_start();
-        include $templatePath;
-
-        return ob_get_clean();
+        return $viewParser->parse($layoutPath);
     }
 
     /**

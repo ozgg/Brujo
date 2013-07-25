@@ -44,6 +44,13 @@ abstract class Renderer
     protected $viewName;
 
     /**
+     * Helper broker
+     *
+     * @var HelperBroker
+     */
+    protected $helperBroker;
+
+    /**
      * Render
      *
      * @return string
@@ -80,6 +87,7 @@ abstract class Renderer
         }
 
         $renderer->setDependencyContainer($container);
+        $renderer->setHelperBroker(new HelperBroker);
 
         return $renderer;
     }
@@ -126,6 +134,25 @@ abstract class Renderer
     public function setViewName($viewName)
     {
         $this->viewName = $viewName;
+
+        return $this;
+    }
+
+    /**
+     * @return \Brujo\HelperBroker
+     */
+    public function getHelperBroker()
+    {
+        return $this->helperBroker;
+    }
+
+    /**
+     * @param \Brujo\HelperBroker $helperBroker
+     * @return Renderer
+     */
+    public function setHelperBroker(HelperBroker $helperBroker)
+    {
+        $this->helperBroker = $helperBroker;
 
         return $this;
     }
