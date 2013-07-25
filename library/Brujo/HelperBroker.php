@@ -34,7 +34,7 @@ class HelperBroker
                 $input    = (array) json_decode($arguments, true);
 
                 if (is_callable($callback)) {
-                    $result = call_user_func($callback, $input);
+                    $result = call_user_func_array($callback, $input);
                 } else {
                     $result = "Cannot call {$helperName}:{$methodName}";
                 }
