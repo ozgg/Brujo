@@ -322,7 +322,6 @@ class Application
         );
         $renderer->setParameters($controller->getParameters());
         $renderer->setLayoutName($controller->getLayoutName());
-        $renderer->setViewName($controller->getViewName());
         $renderer->setBaseDirectory($this->getBaseDirectory());
 
         $response = new Response($renderer->render());

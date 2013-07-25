@@ -25,6 +25,7 @@ class Html extends Renderer
         /** @var ViewParser $viewParser */
         $viewParser = $this->getHelperBroker()->getHelper('viewParser');
         $viewParser->setBaseDirectory($this->getBaseDirectory());
+
         $layoutPath = 'layouts/' . $this->getLayoutName();
 
         return $viewParser->parse($layoutPath);

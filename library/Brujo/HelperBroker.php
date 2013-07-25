@@ -10,14 +10,14 @@
 
 namespace Brujo;
 
-use Brujo\Traits\HasParameters;
+use Brujo\Traits;
 
 /**
  * Helper broker
  */
-class HelperBroker 
+class HelperBroker
 {
-    use HasParameters;
+    use Traits\HasParameters, Traits\Dependency\Container;
 
     /**
      * @var Helper[]
@@ -65,6 +65,9 @@ class HelperBroker
                 $helper = new $helperClass($this);
                 if ($helper instanceof Helper) {
                     $helper->setParameters($this->getParameters());
+                    $helper->setDependencyContainer(
+                        $this->getDependencyContainer()
+                    );
                     $this->storage[$helperName] = $helper;
                 }
             }

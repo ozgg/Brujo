@@ -37,13 +37,6 @@ abstract class Renderer
     protected $layoutName;
 
     /**
-     * View name
-     *
-     * @var string
-     */
-    protected $viewName;
-
-    /**
      * Helper broker
      *
      * @var HelperBroker
@@ -86,8 +79,10 @@ abstract class Renderer
                 throw new \InvalidArgumentException($error);
         }
 
+        $broker = new HelperBroker;
+        $broker->setDependencyContainer($container);
         $renderer->setDependencyContainer($container);
-        $renderer->setHelperBroker(new HelperBroker);
+        $renderer->setHelperBroker($broker);
 
         return $renderer;
     }
@@ -111,29 +106,6 @@ abstract class Renderer
     public function setLayoutName($layoutName)
     {
         $this->layoutName = $layoutName;
-
-        return $this;
-    }
-
-    /**
-     * Get view name
-     *
-     * @return string
-     */
-    public function getViewName()
-    {
-        return $this->viewName;
-    }
-
-    /**
-     * Set view name
-     *
-     * @param string $viewName
-     * @return Renderer
-     */
-    public function setViewName($viewName)
-    {
-        $this->viewName = $viewName;
 
         return $this;
     }

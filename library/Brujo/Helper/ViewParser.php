@@ -21,8 +21,13 @@ class ViewParser extends Helper
     public function parse($view)
     {
         $file = $this->getBaseDirectory() . "/{$view}.html";
+        $this->injectDependency('viewsPath', $this->getBaseDirectory());
         if (is_file($file)) {
-            $result = file_get_contents($file);
+            $content = file_get_contents($file);
+            $pattern = '/\{! (.+) !\}/';
+            $result  = preg_replace_callback(
+                $pattern, [$this, 'parseBlock'], $content
+            );
         } else {
             throw new \RuntimeException("Cannot find view at {$file}");
         }
