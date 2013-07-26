@@ -1,16 +1,16 @@
 <?php
 /**
- * 
- * 
- * Date: 26.07.13
- * Time: 13:37
+ * Abstract model
  *
  * @author Maxim Khan-Magomedov <maxim.km@gmail.com>
  * @package Brujo
  */
 
 namespace Brujo;
- 
+
+/**
+ * Abstract model
+ */
 abstract class Model
 {
     /**
