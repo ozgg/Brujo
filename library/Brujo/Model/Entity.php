@@ -10,6 +10,7 @@
 
 namespace Brujo\Model;
  
+use Brujo\Inflection\Countable;
 use Brujo\Model;
 
 /**
@@ -17,6 +18,8 @@ use Brujo\Model;
  */
 abstract class Entity extends Model
 {
+    use Countable;
+
     /**
      * Metadata
      *

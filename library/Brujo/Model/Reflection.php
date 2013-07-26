@@ -12,12 +12,15 @@
 namespace Brujo\Model;
 
 use Brujo\Model\Reflection\Property;
+use Brujo\Traits\Reflection\DocBlock;
 
 /**
  * Reflection of model class
  */
 class Reflection extends \ReflectionClass
 {
+    use DocBlock;
+
     /**
      * Get property
      *

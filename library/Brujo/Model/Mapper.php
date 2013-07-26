@@ -15,30 +15,11 @@ namespace Brujo\Model;
  */
 abstract class Mapper
 {
-    protected $storage;
-
     abstract public function save(Entity $entity);
 
     abstract public function destroy(Entity $entity);
 
-    /**
-     * @return mixed
-     */
-    public function getStorage()
-    {
-        return $this->storage;
-    }
-
-    /**
-     * @param mixed $storage
-     * @return Mapper
-     */
-    public function setStorage($storage)
-    {
-        $this->storage = $storage;
-
-        return $this;
-    }
+    abstract protected function checkEntityClass(Entity $entity);
 
     protected function onCreate(Entity $entity)
     {
@@ -61,6 +42,7 @@ abstract class Mapper
      */
     protected function releaseTriggers(Entity $entity, $before = true)
     {
+        $this->checkEntityClass($entity);
         $orphans = [];
         foreach ($entity->getTriggers() as $name => $type) {
             $trigger = 'trigger' . ucfirst($name);
