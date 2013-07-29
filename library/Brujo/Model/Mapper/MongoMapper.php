@@ -1,7 +1,7 @@
 <?php
 /**
- * 
- * 
+ *
+ *
  * Date: 26.07.13
  * Time: 16:26
  *
@@ -10,7 +10,7 @@
  */
 
 namespace Brujo\Model\Mapper;
- 
+
 use Brujo\Model;
 use Brujo\Traits\Dependency\Container;
 
@@ -22,6 +22,11 @@ class MongoMapper extends Model\Mapper
     protected $connection;
 
     /**
+     * @var \MongoCollection
+     */
+    protected $collection;
+
+    /**
      * @var string
      */
     protected $collectionName;
@@ -30,6 +35,102 @@ class MongoMapper extends Model\Mapper
      * @var string
      */
     protected $databaseName;
+
+    /**
+     * @var array
+     */
+    protected $criteria = [];
+
+    /**
+     * @var array
+     */
+    protected $sort = [];
+
+    /**
+     * @var int
+     */
+    protected $limit = 0;
+
+    /**
+     * @param array $criteria
+     * @return MongoMapper
+     */
+    public function setCriteria($criteria)
+    {
+        $this->criteria = $criteria;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCriteria()
+    {
+        return $this->criteria;
+    }
+
+    /**
+     * @param int $limit
+     * @return MongoMapper
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $offset
+     * @return MongoMapper
+     */
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @param array $sort
+     * @return MongoMapper
+     */
+    public function setSort($sort)
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSort()
+    {
+        return $this->sort;
+    }
+
+    /**
+     * @var int
+     */
+    protected $offset = 0;
 
     public function connect($server, array $options = [])
     {
@@ -86,6 +187,17 @@ class MongoMapper extends Model\Mapper
         $this->onDestroy($entity);
         $storage = $this->getStorage();
         $storage->remove(['_id' => $entity->getMongoId()]);
+    }
+
+    public function getCursor(array $fields = [])
+    {
+        if (!$this->collection instanceof \MongoCollection) {
+            $this->collection = $this->connection->selectCollection(
+                $this->getDatabaseName(), $this->getCollectionName()
+            );
+        }
+
+        return $this->collection->find($this->criteria, $fields);
     }
 
     /**
